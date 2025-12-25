@@ -95,7 +95,7 @@ Docker Compose
 Node.js (v18+) (only if running services outside Docker)
 
 ▶️ Step 1: Clone the Repository
-git clone https://github.com/your-username/bonding-backend.git
+git clone https://github.com/lusungu-skillset/bonding-backend.git
 cd bonding-backend
 
 ▶️ Step 2: Start All Services
