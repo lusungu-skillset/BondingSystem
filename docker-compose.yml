@@ -1,0 +1,271 @@
+version: "3.9"
+
+services:
+  # ======================
+  # AUTH DATABASE
+  # ======================
+  mysql-auth:
+    image: mysql:8.0
+    container_name: mysql-auth
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: auth_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-auth-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bonding-net
+
+  # ======================
+  # AUTH SERVICE
+  # ======================
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/auth-service/Dockerfile
+    container_name: auth-service
+    restart: unless-stopped
+    depends_on:
+      mysql-auth:
+        condition: service_healthy
+    environment:
+      API_PORT: 3001
+      AUTH_DB_HOST: mysql-auth
+      AUTH_DB_PORT: 3306
+      AUTH_DB_USERNAME: root
+      AUTH_DB_PASSWORD: rootpassword
+      AUTH_DB_NAME: auth_db
+    ports:
+      - "3001:3001"
+    networks:
+      - bonding-net
+
+  # ==========================
+  # PERSONAL DATABASE
+  # ==========================
+  mysql-personal:
+    image: mysql:8.0
+    container_name: mysql-personal
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: personal_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-personal-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bonding-net
+
+  # ==========================
+  # PERSONAL SERVICE
+  # ==========================
+  personal-service:
+    build:
+      context: .
+      dockerfile: apps/personal-service/Dockerfile
+    container_name: personal-service
+    restart: unless-stopped
+    depends_on:
+      mysql-personal:
+        condition: service_healthy
+    environment:
+      API_PORT: 3002
+      PERSONAL_DB_HOST: mysql-personal
+      PERSONAL_DB_PORT: 3306
+      PERSONAL_DB_USERNAME: root
+      PERSONAL_DB_PASSWORD: rootpassword
+      PERSONAL_DB_NAME: personal_db
+    ports:
+      - "3002:3002"
+    networks:
+      - bonding-net
+
+  # ==========================
+  # BANK DATABASE
+  # ==========================
+  mysql-bank:
+    image: mysql:8.0
+    container_name: mysql-bank
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bank_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql-bank-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bonding-net
+
+  # ==========================
+  # BANK SERVICE
+  # ==========================
+  bank-service:
+    build:
+      context: .
+      dockerfile: apps/bank-service/Dockerfile
+    container_name: bank-service
+    restart: unless-stopped
+    depends_on:
+      mysql-bank:
+        condition: service_healthy
+    environment:
+      API_PORT: 3003
+      BANK_DB_HOST: mysql-bank
+      BANK_DB_PORT: 3306
+      BANK_DB_USERNAME: root
+      BANK_DB_PASSWORD: rootpassword
+      BANK_DB_NAME: bank_db
+    ports:
+      - "3003:3003"
+    networks:
+      - bonding-net
+
+  # ==========================
+  # PARENT DATABASE
+  # ==========================
+  mysql-parent:
+    image: mysql:8.0
+    container_name: mysql-parent
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: parent_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql-parent-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bonding-net
+
+  # ==========================
+  # PARENT SERVICE
+  # ==========================
+  parent-service:
+    build:
+      context: .
+      dockerfile: apps/parent-service/Dockerfile
+    container_name: parent-service
+    restart: unless-stopped
+    depends_on:
+      mysql-parent:
+        condition: service_healthy
+    environment:
+      API_PORT: 3004
+      PARENT_DB_HOST: mysql-parent
+      PARENT_DB_PORT: 3306
+      PARENT_DB_USERNAME: root
+      PARENT_DB_PASSWORD: rootpassword
+      PARENT_DB_NAME: parent_db
+    ports:
+      - "3004:3004"
+    networks:
+      - bonding-net
+
+  # ==========================
+  # LOAN DATABASE
+  # ==========================
+  mysql-loan:
+    image: mysql:8.0
+    container_name: mysql-loan
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: loan_db
+    ports:
+      - "3311:3306"
+    volumes:
+      - mysql-loan-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bonding-net
+
+  # ==========================
+  # LOAN SERVICE
+  # ==========================
+  loan-service:
+    build:
+      context: .
+      dockerfile: apps/loan-service/Dockerfile
+    container_name: loan-service
+    restart: unless-stopped
+    depends_on:
+      mysql-loan:
+        condition: service_healthy
+    environment:
+      API_PORT: 3005
+      LOAN_DB_HOST: mysql-loan
+      LOAN_DB_PORT: 3306
+      LOAN_DB_USERNAME: root
+      LOAN_DB_PASSWORD: rootpassword
+      LOAN_DB_NAME: loan_db
+    ports:
+      - "3005:3005"
+    networks:
+      - bonding-net
+
+  # ==========================
+  # API GATEWAY
+  # ==========================
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: api-gateway
+    restart: unless-stopped
+    env_file:
+      - apps/api-gateway/.env
+    depends_on:
+      - auth-service
+      - personal-service
+      - bank-service
+      - parent-service
+      - loan-service
+    ports:
+      - "3000:3000"
+    networks:
+      - bonding-net
+
+# ======================
+# VOLUMES
+# ======================
+volumes:
+  mysql-auth-data:
+  mysql-personal-data:
+  mysql-bank-data:
+  mysql-parent-data:
+  mysql-loan-data:
+
+# ======================
+# NETWORK
+# ======================
+networks:
+  bonding-net:
+    driver: bridge
