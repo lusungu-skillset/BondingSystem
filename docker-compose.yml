@@ -1,9 +1,7 @@
 version: "3.9"
 
 services:
-  # ======================
-  # AUTH DATABASE
-  # ======================
+ 
   mysql-auth:
     image: mysql:8.0
     container_name: mysql-auth
@@ -23,9 +21,7 @@ services:
     networks:
       - bonding-net
 
-  # ======================
-  # AUTH SERVICE
-  # ======================
+ 
   auth-service:
     build:
       context: .
@@ -47,9 +43,7 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # PERSONAL DATABASE
-  # ==========================
+
   mysql-personal:
     image: mysql:8.0
     container_name: mysql-personal
@@ -69,9 +63,7 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # PERSONAL SERVICE
-  # ==========================
+ 
   personal-service:
     build:
       context: .
@@ -93,9 +85,6 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # BANK DATABASE
-  # ==========================
   mysql-bank:
     image: mysql:8.0
     container_name: mysql-bank
@@ -115,9 +104,7 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # BANK SERVICE
-  # ==========================
+
   bank-service:
     build:
       context: .
@@ -139,9 +126,7 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # PARENT DATABASE
-  # ==========================
+
   mysql-parent:
     image: mysql:8.0
     container_name: mysql-parent
@@ -161,9 +146,7 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # PARENT SERVICE
-  # ==========================
+ 
   parent-service:
     build:
       context: .
@@ -185,9 +168,6 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # LOAN DATABASE
-  # ==========================
   mysql-loan:
     image: mysql:8.0
     container_name: mysql-loan
@@ -207,9 +187,7 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # LOAN SERVICE
-  # ==========================
+  
   loan-service:
     build:
       context: .
@@ -231,9 +209,7 @@ services:
     networks:
       - bonding-net
 
-  # ==========================
-  # API GATEWAY
-  # ==========================
+  
   api-gateway:
     build:
       context: .
@@ -253,9 +229,6 @@ services:
     networks:
       - bonding-net
 
-# ======================
-# VOLUMES
-# ======================
 volumes:
   mysql-auth-data:
   mysql-personal-data:
@@ -263,9 +236,6 @@ volumes:
   mysql-parent-data:
   mysql-loan-data:
 
-# ======================
-# NETWORK
-# ======================
 networks:
   bonding-net:
     driver: bridge

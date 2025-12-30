@@ -7,7 +7,6 @@ import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 export class ProxyController {
   constructor(private readonly proxy: ProxyService) {}
 
-  // 🔓 PUBLIC ROUTES
   @All('auth/register')
   register(@Req() req: Request, @Body() body: any) {
     return this.proxy.forward(
@@ -28,7 +27,6 @@ export class ProxyController {
     );
   }
 
-  // 🔒 PROTECTED ROUTES
   @UseGuards(JwtAuthGuard)
   @All('personal/*')
   personal(@Req() req: Request, @Body() body: any) {

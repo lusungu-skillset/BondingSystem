@@ -16,9 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // =====================
-  // REGISTER
-  // =====================
+
   async register(data: Partial<Register>) {
     const exists = await this.repo.findOne({
       where: { RegNumber: data.RegNumber },
@@ -31,9 +29,6 @@ export class AuthService {
     return this.repo.save(this.repo.create(data));
   }
 
-  // =====================
-  // LOGIN
-  // =====================
   async login(email: string, password: string) {
     const user = await this.repo.findOne({
       where: { email },
@@ -47,7 +42,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Generate JWT token
     const payload = { sub: user.id, email: user.email, RegNumber: user.RegNumber };
     const access_token = this.jwtService.sign(payload);
     return {
